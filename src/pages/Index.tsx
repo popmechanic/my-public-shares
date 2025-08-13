@@ -88,6 +88,47 @@ const Index = () => {
     });
   };
 
+  const handleBecomeTradeable = async () => {
+    try {
+      console.log('Attempting to become tradeable for user:', user?.id);
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update({ 
+          is_tradeable: true,
+          total_shares: 10000,
+          available_shares: 10000,
+          current_price: 100.00,
+          market_cap: 1000000.00
+        })
+        .eq('user_id', user?.id);
+
+      if (error) {
+        console.error('Error becoming tradeable:', error);
+        toast({
+          title: "Error",
+          description: "Failed to become tradeable. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        console.log('Successfully became tradeable');
+        toast({
+          title: "Success!",
+          description: "You are now tradeable! Others can buy shares in you.",
+        });
+        // Refresh the data to show updated status
+        fetchData();
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (loading || loadingData) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -200,7 +241,7 @@ const Index = () => {
               <p className="text-muted-foreground mb-4">
                 Be the first to become a tradeable person on the platform!
               </p>
-              <Button variant="trading">Become Tradeable</Button>
+              <Button variant="trading" onClick={handleBecomeTradeable}>Become Tradeable</Button>
             </div>
           )}
         </section>
