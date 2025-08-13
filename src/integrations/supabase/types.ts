@@ -14,7 +14,221 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          available_shares: number | null
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          current_price: number | null
+          full_name: string | null
+          id: string
+          is_tradeable: boolean | null
+          market_cap: number | null
+          total_shares: number | null
+          updated_at: string
+          user_id: string
+          username: string
+        }
+        Insert: {
+          available_shares?: number | null
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          current_price?: number | null
+          full_name?: string | null
+          id?: string
+          is_tradeable?: boolean | null
+          market_cap?: number | null
+          total_shares?: number | null
+          updated_at?: string
+          user_id: string
+          username: string
+        }
+        Update: {
+          available_shares?: number | null
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          current_price?: number | null
+          full_name?: string | null
+          id?: string
+          is_tradeable?: boolean | null
+          market_cap?: number | null
+          total_shares?: number | null
+          updated_at?: string
+          user_id?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      proposals: {
+        Row: {
+          created_at: string
+          description: string
+          ends_at: string
+          id: string
+          options: Json
+          proposer_id: string
+          status: string
+          title: string
+          tradeable_user_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          ends_at: string
+          id?: string
+          options?: Json
+          proposer_id: string
+          status?: string
+          title: string
+          tradeable_user_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          ends_at?: string
+          id?: string
+          options?: Json
+          proposer_id?: string
+          status?: string
+          title?: string
+          tradeable_user_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      shares: {
+        Row: {
+          average_price: number
+          created_at: string
+          id: string
+          owner_id: string
+          quantity: number
+          tradeable_user_id: string
+          updated_at: string
+        }
+        Insert: {
+          average_price?: number
+          created_at?: string
+          id?: string
+          owner_id: string
+          quantity?: number
+          tradeable_user_id: string
+          updated_at?: string
+        }
+        Update: {
+          average_price?: number
+          created_at?: string
+          id?: string
+          owner_id?: string
+          quantity?: number
+          tradeable_user_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          id: string
+          price_per_share: number
+          quantity: number
+          seller_id: string | null
+          total_amount: number
+          tradeable_user_id: string
+          transaction_type: string
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          id?: string
+          price_per_share: number
+          quantity: number
+          seller_id?: string | null
+          total_amount: number
+          tradeable_user_id: string
+          transaction_type: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          price_per_share?: number
+          quantity?: number
+          seller_id?: string | null
+          total_amount?: number
+          tradeable_user_id?: string
+          transaction_type?: string
+        }
+        Relationships: []
+      }
+      user_accounts: {
+        Row: {
+          balance: number | null
+          created_at: string
+          id: string
+          total_portfolio_value: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number | null
+          created_at?: string
+          id?: string
+          total_portfolio_value?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number | null
+          created_at?: string
+          id?: string
+          total_portfolio_value?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      votes: {
+        Row: {
+          created_at: string
+          id: string
+          option_index: number
+          proposal_id: string
+          voter_id: string
+          voting_power: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          option_index: number
+          proposal_id: string
+          voter_id: string
+          voting_power?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          option_index?: number
+          proposal_id?: string
+          voter_id?: string
+          voting_power?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "votes_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
