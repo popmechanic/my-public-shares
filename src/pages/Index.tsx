@@ -9,6 +9,7 @@ import TradingCard from '@/components/TradingCard';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, Users, Vote, BarChart3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { executeTradeTransaction } from '@/utils/tradeExecution';
 
 interface Profile {
   id: string;
@@ -81,11 +82,33 @@ const Index = () => {
     }
   };
 
-  const handleBuyShares = async (username: string, quantity: number, price: number) => {
-    toast({
-      title: "Trade Executed",
-      description: `Bought ${quantity} shares of @${username} for $${(quantity * price).toFixed(2)}`,
-    });
+  const handleBuyShares = async (tradeableUserId: string, quantity: number, price: number) => {
+    if (!user) return;
+
+    console.log('Executing buy trade:', { tradeableUserId, quantity, price });
+    
+    const result = await executeTradeTransaction(
+      user.id,
+      tradeableUserId,
+      quantity,
+      price,
+      'buy'
+    );
+
+    if (result.success) {
+      toast({
+        title: "Trade Executed!",
+        description: `Successfully bought ${quantity} shares for $${(quantity * price).toFixed(2)}`,
+      });
+      // Refresh data to show updated balances and holdings
+      await fetchData();
+    } else {
+      toast({
+        title: "Trade Failed",
+        description: result.error || "Unknown error occurred",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleBecomeTradeable = async () => {
@@ -229,7 +252,8 @@ const Index = () => {
                 totalShares={profile.total_shares}
                 availableShares={profile.available_shares}
                 avatarUrl={profile.avatar_url}
-                onBuy={(quantity, price) => handleBuyShares(profile.username, quantity, price)}
+                onBuy={(quantity, price) => handleBuyShares(profile.user_id, quantity, price)}
+                onSell={(quantity, price) => handleBuyShares(profile.user_id, quantity, price)} // Will be ignored on index page
               />
             ))}
           </div>

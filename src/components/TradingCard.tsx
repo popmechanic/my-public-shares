@@ -16,6 +16,7 @@ interface TradingCardProps {
   availableShares: number;
   avatarUrl?: string;
   isOwn?: boolean;
+  ownedShares?: number;
   onBuy?: (quantity: number, price: number) => void;
   onSell?: (quantity: number, price: number) => void;
 }
@@ -30,6 +31,7 @@ const TradingCard = ({
   availableShares,
   avatarUrl,
   isOwn = false,
+  ownedShares = 0,
   onBuy,
   onSell
 }: TradingCardProps) => {
@@ -91,12 +93,24 @@ const TradingCard = ({
         </div>
 
         {/* Shares Available */}
-        <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-          <div className="flex items-center space-x-2">
-            <Users className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm">Available Shares</span>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+            <div className="flex items-center space-x-2">
+              <Users className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm">Available Shares</span>
+            </div>
+            <span className="font-medium">{availableShares.toLocaleString()}</span>
           </div>
-          <span className="font-medium">{availableShares.toLocaleString()}</span>
+          
+          {ownedShares > 0 && (
+            <div className="flex items-center justify-between p-3 bg-primary/10 rounded-lg border border-primary/20">
+              <div className="flex items-center space-x-2">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                <span className="text-sm font-medium text-primary">You Own</span>
+              </div>
+              <span className="font-bold text-primary">{ownedShares.toLocaleString()} shares</span>
+            </div>
+          )}
         </div>
 
         {/* Trading Controls */}
@@ -126,7 +140,7 @@ const TradingCard = ({
                 <Input
                   type="number"
                   min="1"
-                  max={tradeType === 'buy' ? availableShares : 999}
+                  max={tradeType === 'buy' ? availableShares : ownedShares}
                   value={quantity}
                   onChange={(e) => setQuantity(Number(e.target.value))}
                   placeholder="Quantity"
@@ -136,6 +150,7 @@ const TradingCard = ({
                 onClick={handleTrade}
                 variant={tradeType === 'buy' ? 'success' : 'destructive'}
                 className="min-w-[100px]"
+                disabled={tradeType === 'sell' && ownedShares === 0}
               >
                 {tradeType === 'buy' ? 'Buy' : 'Sell'} ${totalValue.toFixed(2)}
               </Button>

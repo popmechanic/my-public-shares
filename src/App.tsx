@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
+import Trade from "./pages/Trade";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -20,11 +21,9 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
-            {/* Placeholder routes for future pages */}
-            <Route path="/trade" element={<div className="min-h-screen bg-background flex items-center justify-center"><p>Trading page coming soon!</p></div>} />
+            <Route path="/trade" element={<Trade />} />
             <Route path="/vote" element={<div className="min-h-screen bg-background flex items-center justify-center"><p>Voting page coming soon!</p></div>} />
             <Route path="/leaderboard" element={<div className="min-h-screen bg-background flex items-center justify-center"><p>Leaderboard page coming soon!</p></div>} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
