@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { TrendingUp, TrendingDown, Users, Vote } from 'lucide-react';
+import { TrendingUp, TrendingDown, Users, Vote, BarChart3 } from 'lucide-react';
+import StockChartModal from './StockChartModal';
 
 interface TradingCardProps {
   username: string;
@@ -17,6 +18,7 @@ interface TradingCardProps {
   avatarUrl?: string;
   isOwn?: boolean;
   ownedShares?: number;
+  tradeableUserId?: string;
   onBuy?: (quantity: number, price: number) => void;
   onSell?: (quantity: number, price: number) => void;
 }
@@ -32,11 +34,13 @@ const TradingCard = ({
   avatarUrl,
   isOwn = false,
   ownedShares = 0,
+  tradeableUserId,
   onBuy,
   onSell
 }: TradingCardProps) => {
   const [quantity, setQuantity] = useState(1);
   const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
+  const [showChart, setShowChart] = useState(false);
   
   const isPositive = priceChange >= 0;
   const totalValue = quantity * currentPrice;
@@ -164,12 +168,30 @@ const TradingCard = ({
             <Vote className="h-4 w-4 mr-2" />
             Proposals
           </Button>
-          <Button variant="outline" size="sm" className="flex-1">
-            <TrendingUp className="h-4 w-4 mr-2" />
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1"
+            onClick={() => setShowChart(true)}
+            disabled={!tradeableUserId}
+          >
+            <BarChart3 className="h-4 w-4 mr-2" />
             Chart
           </Button>
         </div>
       </CardContent>
+      
+      {/* Stock Chart Modal */}
+      {tradeableUserId && (
+        <StockChartModal
+          isOpen={showChart}
+          onClose={() => setShowChart(false)}
+          tradeableUserId={tradeableUserId}
+          username={username}
+          fullName={fullName}
+          currentPrice={currentPrice}
+        />
+      )}
     </Card>
   );
 };

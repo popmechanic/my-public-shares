@@ -252,6 +252,7 @@ const Index = () => {
                 totalShares={profile.total_shares}
                 availableShares={profile.available_shares}
                 avatarUrl={profile.avatar_url}
+                tradeableUserId={profile.user_id}
                 onBuy={(quantity, price) => handleBuyShares(profile.user_id, quantity, price)}
                 onSell={(quantity, price) => handleBuyShares(profile.user_id, quantity, price)} // Will be ignored on index page
               />

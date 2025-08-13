@@ -295,6 +295,7 @@ const Trade = () => {
                   totalShares={profile.total_shares}
                   availableShares={profile.available_shares}
                   avatarUrl={profile.avatar_url}
+                  tradeableUserId={profile.user_id}
                   ownedShares={userShare?.quantity || 0}
                   onBuy={(quantity, price) => handleTrade(profile.user_id, quantity, price, 'buy')}
                   onSell={(quantity, price) => handleTrade(profile.user_id, quantity, price, 'sell')}
