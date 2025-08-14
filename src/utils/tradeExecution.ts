@@ -73,15 +73,38 @@ export const executeTradeTransaction = async (
       ? tradeableProfile.available_shares - quantity
       : tradeableProfile.available_shares + quantity;
 
+    console.log('🔄 Updating available shares:', {
+      tradeableUserId,
+      currentShares: tradeableProfile.available_shares,
+      newShares: newAvailableShares,
+      change: transactionType === 'buy' ? -quantity : quantity
+    });
+
     const { error: sharesError } = await supabase
       .from('profiles')
       .update({ available_shares: newAvailableShares })
       .eq('user_id', tradeableUserId);
 
     if (sharesError) {
-      console.error('Error updating available shares:', sharesError);
+      console.error('❌ Error updating available shares:', {
+        error: sharesError,
+        tradeableUserId,
+        newAvailableShares,
+        errorCode: sharesError.code,
+        errorMessage: sharesError.message,
+        errorDetails: sharesError.details,
+        errorHint: sharesError.hint
+      });
+      
+      // Check if this is an RLS policy error
+      if (sharesError.message?.includes('policy') || sharesError.code === '42501') {
+        return { success: false, error: 'Permission denied: Cannot update share availability. This may be a Row Level Security policy issue.' };
+      }
+      
       return { success: false, error: 'Failed to update share availability' };
     }
+
+    console.log('✅ Successfully updated available shares');
 
     // 5. Update or create shares ownership record
     const { data: existingShares, error: existingSharesError } = await supabase
