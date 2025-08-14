@@ -8,8 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { TrendingUp, Search, Filter, BarChart3 } from 'lucide-react';
+import { TrendingUp, Search, Filter, BarChart3, Bug } from 'lucide-react';
 import { executeTradeTransaction } from '@/utils/tradeExecution';
+import { debugAllTradeableUsers, fixShareCountDiscrepancies } from '@/utils/debugTrading';
 
 interface Profile {
   id: string;
@@ -180,16 +181,54 @@ const Trade = () => {
               <TrendingUp className="h-8 w-8 mr-3 text-primary" />
               Trading Center
             </h1>
-            {userAccount && (
-              <div className="flex items-center space-x-4">
-                <Badge variant="secondary" className="text-lg py-2 px-4">
-                  Balance: ${userAccount.balance.toFixed(2)}
-                </Badge>
-                <Badge variant="outline" className="text-lg py-2 px-4">
-                  Portfolio: ${userAccount.total_portfolio_value.toFixed(2)}
-                </Badge>
+            <div className="flex items-center space-x-4">
+              {userAccount && (
+                <>
+                  <Badge variant="secondary" className="text-lg py-2 px-4">
+                    Balance: ${userAccount.balance.toFixed(2)}
+                  </Badge>
+                  <Badge variant="outline" className="text-lg py-2 px-4">
+                    Portfolio: ${userAccount.total_portfolio_value.toFixed(2)}
+                  </Badge>
+                </>
+              )}
+              
+              {/* Debug Tools - Remove in production */}
+              <div className="flex space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    console.log('🔍 Running share count debug...');
+                    await debugAllTradeableUsers();
+                  }}
+                  className="text-xs"
+                >
+                  <Bug className="h-4 w-4 mr-1" />
+                  Debug Shares
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    if (confirm('Fix share count discrepancies? This will update the database.')) {
+                      console.log('🔧 Fixing share discrepancies...');
+                      await fixShareCountDiscrepancies();
+                      toast({
+                        title: "Share counts fixed",
+                        description: "Check console for details",
+                      });
+                      // Refresh data
+                      await fetchTradingData();
+                    }
+                  }}
+                  className="text-xs"
+                >
+                  <Bug className="h-4 w-4 mr-1" />
+                  Fix Shares
+                </Button>
               </div>
-            )}
+            </div>
           </div>
         </section>
 
